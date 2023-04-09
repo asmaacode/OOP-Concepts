@@ -4,38 +4,56 @@ using namespace std;
 
 class clsCalculator {
 private:
-	float result = 0, latestOperand = 0;
-	string latestOperation = "";
+	float OldResult = 0, CurrentResult = 0;
+	float  OldOperand = 0, CurrentOperand = 0;
+	string OldOperation = "", CurrentOperation = "";
 
 public:
+	void setCurrentResult(float newResult) {
+		OldResult = CurrentResult;
+		CurrentResult = newResult;
+	}
+	void setCurrentOperand(float newOperand) {
+		OldOperand = CurrentOperand;
+		CurrentOperand = newOperand;
+	}
+	void setCurrentOperation(string newResult) {
+		OldOperation = CurrentOperation;
+		CurrentOperation = newResult;
+	}
 	void Add(float operand) {
-		result += operand;
-		latestOperation = "Adding";
-		latestOperand = operand;
+		setCurrentResult(CurrentResult + operand);
+		setCurrentOperand(operand);
+		setCurrentOperation("Adding");
 	};
 	void Subtract(float operand) {
-		result -= operand;
-		latestOperation = "Subtraction";
-		latestOperand = operand;
+		setCurrentResult(CurrentResult - operand);
+		setCurrentOperand(operand);
+		setCurrentOperation("Subtraction");
 	};
 	void Multiply(float operand) {
-		result *= operand;
-		latestOperation = "Multiply";
-		latestOperand = operand;
+		setCurrentResult(CurrentResult * operand);
+		setCurrentOperand(operand);
+		setCurrentOperation("Multiply");
 	};
 	void Divide(float operand) {
 		operand == 0 ? operand = 1 : operand;
-		result /= operand;
-		latestOperation = "Dividing";
-		latestOperand = operand;
+		setCurrentResult(CurrentResult / operand);
+		setCurrentOperand(operand);
+		setCurrentOperation("Dividing");
 	};
-	void PrintResult() { 
-		cout <<"Result After "<<latestOperation<<" "<<to_string(latestOperand) <<" is : " << result<<"\n";
+	void PrintResult() {
+		cout << "Result After " << CurrentOperation << " " << to_string(CurrentOperand) << " is : " << CurrentResult << "\n";
+	};
+	void CancelLastOperation() {
+		CurrentOperand = OldOperand;
+		CurrentResult = OldResult;
+		CurrentOperation = OldOperation;
 	};
 	void Clear() {
-		result = 0;
-		latestOperand = 0;
-		latestOperation = "";
+		OldResult = 0, CurrentResult = 0;
+		OldOperand = 0, CurrentOperand = 0;
+		OldOperation = "", CurrentOperation = "";
 	};
 };
 int main() {
@@ -44,7 +62,7 @@ int main() {
 
 	cal1.Add(100);
 	cal1.PrintResult();
-	
+
 	cal1.Subtract(10);
 	cal1.PrintResult();
 
@@ -52,6 +70,9 @@ int main() {
 	cal1.PrintResult();
 
 	cal1.Divide(10);
+	cal1.PrintResult();
+
+	cal1.CancelLastOperation();
 	cal1.PrintResult();
 	return 0;
 }
