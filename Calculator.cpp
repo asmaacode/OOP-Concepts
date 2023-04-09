@@ -32,10 +32,16 @@ public:
 	void PrintResult() { 
 		cout <<"Result After "<<latestOperation<<" "<<to_string(latestOperand) <<" is : " << result<<"\n";
 	};
-
+	void Clear() {
+		result = 0;
+		latestOperand = 0;
+		latestOperation = "";
+	};
 };
 int main() {
 	clsCalculator cal1;
+	cal1.Clear();
+
 	cal1.Add(100);
 	cal1.PrintResult();
 	
