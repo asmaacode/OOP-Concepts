@@ -4,56 +4,49 @@ using namespace std;
 
 class clsCalculator {
 private:
-	float OldResult = 0, CurrentResult = 0;
-	float  OldOperand = 0, CurrentOperand = 0;
-	string OldOperation = "", CurrentOperation = "";
+	float _OldResult = 0, _CurrentResult = 0,_CurrentOperand = 0;
+	string _CurrentOperation = "Clear";
+	bool IsZero(int num) {
+		return num == 0;
+	}
 
 public:
-	void setCurrentResult(float newResult) {
-		OldResult = CurrentResult;
-		CurrentResult = newResult;
-	}
-	void setCurrentOperand(float newOperand) {
-		OldOperand = CurrentOperand;
-		CurrentOperand = newOperand;
-	}
-	void setCurrentOperation(string newResult) {
-		OldOperation = CurrentOperation;
-		CurrentOperation = newResult;
-	}
+
 	void Add(float operand) {
-		setCurrentResult(CurrentResult + operand);
-		setCurrentOperand(operand);
-		setCurrentOperation("Adding");
+		_OldResult = _CurrentResult;
+		_CurrentResult += operand;
+		_CurrentOperand = operand;
+		_CurrentOperation = "Adding";
 	};
 	void Subtract(float operand) {
-		setCurrentResult(CurrentResult - operand);
-		setCurrentOperand(operand);
-		setCurrentOperation("Subtraction");
+		_OldResult = _CurrentResult;
+		_CurrentResult -= operand;
+		_CurrentOperand = operand;
+		_CurrentOperation = "Subtraction";
 	};
 	void Multiply(float operand) {
-		setCurrentResult(CurrentResult * operand);
-		setCurrentOperand(operand);
-		setCurrentOperation("Multiply");
+		_OldResult = _CurrentResult;
+		_CurrentResult *= operand;
+		_CurrentOperand = operand;
+		_CurrentOperation = "Multiply";
 	};
 	void Divide(float operand) {
-		operand == 0 ? operand = 1 : operand;
-		setCurrentResult(CurrentResult / operand);
-		setCurrentOperand(operand);
-		setCurrentOperation("Dividing");
+		_CurrentOperand = operand;
+		operand = (IsZero(operand) ? 1 : operand);
+		_OldResult = _CurrentResult;
+		_CurrentResult /= operand;
+		_CurrentOperation="Dividing";
 	};
 	void PrintResult() {
-		cout << "Result After " << CurrentOperation << " " << to_string(CurrentOperand) << " is : " << CurrentResult << "\n";
+		cout << "Result After " << _CurrentOperation << " " << _CurrentOperand << " is : " << _CurrentResult << "\n";
 	};
 	void CancelLastOperation() {
-		CurrentOperand = OldOperand;
-		CurrentResult = OldResult;
-		CurrentOperation = OldOperation;
+		_CurrentResult = _OldResult;
+		_CurrentOperand = 0;
+		_CurrentOperation = "Cancel Last Operation";
 	};
 	void Clear() {
-		OldResult = 0, CurrentResult = 0;
-		OldOperand = 0, CurrentOperand = 0;
-		OldOperation = "", CurrentOperation = "";
+		_OldResult = 0, _CurrentResult = 0, _CurrentOperand = 0, _CurrentOperation = "Clear";
 	};
 };
 int main() {
@@ -73,6 +66,9 @@ int main() {
 	cal1.PrintResult();
 
 	cal1.CancelLastOperation();
+	cal1.PrintResult();
+
+	cal1.Clear();
 	cal1.PrintResult();
 	return 0;
 }
