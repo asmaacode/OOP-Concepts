@@ -107,11 +107,13 @@ public:
 		:clsEmployee(ID, FirstName, LastName, Email, Phone, Title, Department, Salary) {
 		_MainPL = MainPL;
 	}
-
+	void SetMainPL(string MainPL) { _MainPL = MainPL; }
+	string GetMainPL() { return _MainPL; }
 	void Print() {
 		clsEmployee::Print();
 		cout << "P.L." << setw(7) << _MainPL << "\n";
 	}
+	_declspec(property(get = GetMainPL, put = SetMainPL)) string MainPL;
 };
 
 int main() {
