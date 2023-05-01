@@ -61,7 +61,7 @@ int main() {
 	clsPerson Person1(100,"Asma","Sabbah","asma@gmail.com","0785917061");
 	Person1.Print();
 
-	Person1.SendEmail("Announcement","Tommorrow will be a break");
+	Person1.SendEmail("Announcement","Tomorrow will be a break");
 	Person1.SendSMS("SMS is very important");
 
 	return 0;
