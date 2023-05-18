@@ -9,10 +9,10 @@ class clsPerson {
 		string City;
 		string Country;
 		clsAddress(string AddressLine1, string AddressLine2, string City, string Country) {
-			AddressLine1 = AddressLine1;
-			AddressLine2 = AddressLine2;
-			City = City;
-			Country = Country;
+			this->AddressLine1 = AddressLine1;
+			this->AddressLine2 = AddressLine2;
+			this->City = City;
+			this->Country = Country;
 		}
 		void Print() {
 			cout << "\nAddress:\n";
