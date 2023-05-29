@@ -1,4 +1,3 @@
-#Done By Asmaa Code
 #pragma once
 #include <vector>
 #include <iostream>
@@ -174,6 +173,53 @@ public:
 	};
 	short countSpecificLetter(char target) {
 		return countSpecificLetter(_Value, target);
+	};
+	static bool isVowel(char& letter) {
+		letter = tolower(letter);
+		return (letter == 'a') || (letter == 'e') || (letter == 'i') || (letter == 'o') || (letter == 'u');
+	};
+	static short countVowels(string s) {
+		short count = 0;
+		for (short i = 0; i < s.length();i++) {
+			if (isVowel(s[i])) count++;
+		}
+		return count;
+	};
+	short countVowels() {
+		return countVowels(_Value);
+	};
+	static string join(vector<string>& words, string delimiter = " ") {
+		string result;
+		for (string& word : words) {
+			result = result + delimiter + word;
+		}
+		return result.substr(delimiter.length(), result.length() - 1);
+	}
+	static string reverseString(string& s) {
+		vector<string>words;
+		words = split(s, " ");
+		short counter = 0, reverseCounter = words.size() - 1;
+		string temp;
+		for (;counter < reverseCounter;counter++, reverseCounter--) {
+			temp = words.at(counter);
+			words.at(counter) = words.at(reverseCounter);
+			words.at(reverseCounter) = temp;
+		}
+		return join(words, " ");
+	};
+	string reverseString() {
+		return reverseString(_Value);
+	};
+	static string removePunctuations(string s) {
+		string punc = ",;.:!?\"\'()", result = "";
+		for (short i = 0;i < s.length();i++) {
+			if (!ispunct(s[i])) {
+				result = result + s[i];
+			}
+		}
+		return result;
+	};
+	void removePunctuations() {
+		_Value= removePunctuations(_Value);
 	}
 };
-
