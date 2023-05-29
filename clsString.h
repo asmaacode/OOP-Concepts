@@ -21,6 +21,7 @@ public:
 	void setValue(string Value) {
 		_Value = Value;
 	};
+
 	static short countWords(string s) {
 		char delimtor = ' ';
 		short count = 0, slicer = 0;
@@ -46,8 +47,8 @@ public:
 		}
 		return statement;
 	};
-	string capitalization() {
-		return capitalization(_Value);
+	void capitalization() {
+		_Value = capitalization(_Value);
 	};
 	static string smallization(string statement) {
 		for (int i = 0;i < statement.length();i++) {
@@ -57,15 +58,15 @@ public:
 		}
 		return statement;
 	};
-	string smallization() {
-		return smallization(_Value);
+	void smallization() {
+		_Value = smallization(_Value);
 	};
 	static string replace(string fullStatement, string oldPart, string newPart) {
 		short fromIndex = fullStatement.find(oldPart);
 		return fullStatement.replace(fromIndex, oldPart.length(), newPart);
 	};
-	string replace(string oldPart, string newPart) {
-		return replace(_Value, oldPart, newPart);
+	void replace(string oldPart, string newPart) {
+		_Value = replace(_Value, oldPart, newPart);
 	};
 	static vector<string> split(string s, string delimiter = " ") {
 		vector<string> words;
@@ -97,30 +98,38 @@ public:
 	string findWordFirstLetter() {
 		return findWordFirstLetter(_Value);
 	}
-	static void trimRight(string& s) {
+	static string trimRight(string s) {
 		for (short i = s.length() - 1;i >= 0;i--) {
 			if (s[i] != ' ') {
 				s = s.substr(0, i + 1);
 				break;
 			}
 		}
-	}
-	static void trimLeft(string& s) {
+		return s;
+	};
+	void trimRight() {
+		_Value = trimRight(_Value);
+	};
+	static string trimLeft(string s) {
 		for (short i = 0;i < s.length();i++) {
 			if (s[i] != ' ') {
 				s = s.substr(i, s.length() - 1);
 				break;
 			}
 		}
-	}
+		return s;
+	};
+	void trimLeft() {
+		_Value = trimLeft(_Value);
+	};
 	static string trim(string s) {
 		trimLeft(s);
 		trimRight(s);
 		return s;
 	}
-	string trim() {
-		return trim(_Value);
-	}
+	void trim() {
+		_Value = trim(_Value);
+	};
 	static string uppercase(string statement) {
 		bool isFirstLetter = true;
 		for (int i = 0;i < statement.length();i++) {
@@ -131,8 +140,8 @@ public:
 		}
 		return statement;
 	};
-	string uppercase() {
-		return uppercase(_Value);
+	void uppercase() {
+		_Value = uppercase(_Value);
 	};
 	static string lowercase(string statement) {
 		bool isFirstLetter = true;
@@ -144,8 +153,8 @@ public:
 		}
 		return statement;
 	};
-	string lowercase() {
-		return lowercase(_Value);
+	void lowercase() {
+		_Value = lowercase(_Value);
 	};
 	static char invertCaseLetter(char letter) {
 		if (islower(letter))
@@ -161,9 +170,9 @@ public:
 		}
 		return s;
 	}
-	string invertAllLetters() {
-		return invertAllLetters(_Value);
-	}
+	void invertAllLetters() {
+		_Value = invertAllLetters(_Value);
+	};
 	static short countSpecificLetter(string s, char target) {
 		short count = 0;
 		for (short i = 0;i < s.length();i++) {
@@ -195,7 +204,14 @@ public:
 		}
 		return result.substr(delimiter.length(), result.length() - 1);
 	}
-	static string reverseString(string& s) {
+	static string join(string words[], short& length, string delimiter = " ") {
+		string result;
+		for (short i = 0;i < length - 1;i++) {
+			result = result + delimiter + words[i];
+		}
+		return result.substr(delimiter.length(), result.length() - 1);
+	};
+	static string reverse(string& s) {
 		vector<string>words;
 		words = split(s, " ");
 		short counter = 0, reverseCounter = words.size() - 1;
@@ -207,8 +223,8 @@ public:
 		}
 		return join(words, " ");
 	};
-	string reverseString() {
-		return reverseString(_Value);
+	void reverse() {
+		_Value = reverse(_Value);
 	};
 	static string removePunctuations(string s) {
 		string punc = ",;.:!?\"\'()", result = "";
@@ -220,6 +236,26 @@ public:
 		return result;
 	};
 	void removePunctuations() {
-		_Value= removePunctuations(_Value);
+		_Value = removePunctuations(_Value);
 	}
+	enum class enWhatToCount { SmallLetters = 0, CapitalLetters = 1, All = 3 };
+	static int countLetters(string s, enWhatToCount WhatToCount = enWhatToCount::All)
+	{
+		if (WhatToCount == enWhatToCount::All)
+		{
+			return s.length();
+		}
+		short Counter = 0;
+		for (short i = 0; i < s.length(); i++)
+		{
+			if (WhatToCount == enWhatToCount::CapitalLetters && isupper(s[i]))
+				Counter++;
+			if (WhatToCount == enWhatToCount::SmallLetters && islower(s[i]))
+				Counter++;
+		}
+		return Counter;
+	};
+	int countLetters(enWhatToCount WhatToCount = enWhatToCount::All) {
+		return countLetters(_Value, WhatToCount);
+	};
 };
