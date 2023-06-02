@@ -1,30 +1,9 @@
 #pragma once
 #pragma warning(disable : 4996) 
 #include<ctime> 
-#include <vector>
-#include <iostream>
-#include <string>
 #include<iomanip>
 #include "clsString.h"
-class clsDraw {
-public:
-	static string generateLine(short length = 0, char symbol = '_') {
-		string line = "";
-		while (length != 0) {
-			line += symbol;
-			length--;
-		}
-		return line;
-	};
-	static string generateTabs(short length = 0) {
-		string tabs = "";
-		while (length != 0) {
-			tabs += " ";
-			length--;
-		}
-		return tabs;
-	};
-};
+#include "clsDrawer.h"
 class clsDate
 {
 private:
@@ -47,6 +26,29 @@ public://set , get
 		_day = 1, _month = 1, _year = year;
 		*this = addXDay(*this, days);
 	};
+
+	void setDay(short day) {
+		_day = day;
+	};
+	short getDay() {
+		return _day;
+	};
+	__declspec(property(get=getDay , put = setDay)) short _day ;
+	void setMonth(short month) {
+		_month = month;
+	};
+	short getMonth() {
+		return _month;
+	};
+	__declspec(property(get = getMonth, put = setMonth)) short _month;
+
+	void setYear(short year) {
+		_year = year;
+	};
+	short getYear() {
+		return _year;
+	};
+	__declspec(property(get = getYear, put = setYear)) short _year;
 
 	static short getThisYear() {
 		time_t t = time(0);
@@ -605,9 +607,9 @@ public://set , get
 	};
 
 	static void printHeader(short& month) {
-		cout << "\n" << clsDraw::generateTabs(2);
-		cout << clsDraw::generateLine(15) << getMonthName(month) << clsDraw::generateLine(15) << "\n\n";
-		cout << clsDraw::generateTabs(2);
+		cout << "\n" << clsDrawer::generateTabs(2);
+		cout << clsDrawer::generateLine(15) << getMonthName(month) << clsDrawer::generateLine(15) << "\n\n";
+		cout << clsDrawer::generateTabs(2);
 		cout << setw(3) << getWeekDayName(0) << "  ";
 		cout << setw(3) << getWeekDayName(1) << "  ";
 		cout << setw(3) << getWeekDayName(2) << "  ";
@@ -618,15 +620,15 @@ public://set , get
 		cout << endl;
 	};
 	static void printFooter() {
-		cout << "\n" << clsDraw::generateTabs(2);
-		cout << clsDraw::generateLine(18) << clsDraw::generateLine(15) << "\n\n";
+		cout << "\n" << clsDrawer::generateTabs(2);
+		cout << clsDrawer::generateLine(18) << clsDrawer::generateLine(15) << "\n\n";
 	}
 	static void printBody(short& year, short& month) {
 		short firstDay = getOrderWeekDayOfDate(1, month, year);
 		short countMonthDays = countDaysInMonth(year, month);
 		short currentDay = 1;
 
-		cout << clsDraw::generateTabs(2);
+		cout << clsDrawer::generateTabs(2);
 		for (short i = 0;currentDay <= countMonthDays;i++) {
 			if (i >= firstDay) {
 				cout << setw(3) << currentDay << "  ";
@@ -638,7 +640,7 @@ public://set , get
 
 			if ((i + 1) % 7 == 0) {
 				cout << endl;
-				cout << clsDraw::generateTabs(2);
+				cout << clsDrawer::generateTabs(2);
 			}
 		}
 	}
@@ -653,19 +655,19 @@ public://set , get
 		printFooter();
 	};
 	static void printYearCalendar(short year) {
-		cout << clsDraw::generateTabs(2) << clsDraw::generateLine(33, '=') << "\n";
-		cout << clsDraw::generateTabs(12) << "Calendar - " << year << "\n";
-		cout << clsDraw::generateTabs(2) << clsDraw::generateLine(33, '=') << "\n";
+		cout << clsDrawer::generateTabs(2) << clsDrawer::generateLine(33, '=') << "\n";
+		cout << clsDrawer::generateTabs(12) << "Calendar - " << year << "\n";
+		cout << clsDrawer::generateTabs(2) << clsDrawer::generateLine(33, '=') << "\n";
 		for (short i = 1;i <= 12;i++) {
 			printMonthCalendar(year, i);
 		};
 	};
 	void printYearCalendar() {
-		cout << clsDraw::generateTabs(2) << clsDraw::generateLine(33, '=') << "\n";
-		cout << clsDraw::generateTabs(12) << "Calendar - " << _year << "\n";
-		cout << clsDraw::generateTabs(2) << clsDraw::generateLine(33, '=') << "\n";
+		cout << clsDrawer::generateTabs(2) << clsDrawer::generateLine(33, '=') << "\n";
+		cout << clsDrawer::generateTabs(12) << "Calendar - " << _year << "\n";
+		cout << clsDrawer::generateTabs(2) << clsDrawer::generateLine(33, '=') << "\n";
 		for (short i = 1;i <= 12;i++) {
 			printMonthCalendar(_year, i);
 		};
 	};
-};
+	};
