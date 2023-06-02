@@ -29,8 +29,24 @@ class clsDate
 {
 private:
 	short _day = 0, _month = 0, _year = 0;
-public:
-	enum enCompareDate { Before = -1, Equal = 0, After = 1 };
+public://set , get
+	clsDate() {
+		_day = getThisDay();
+		_month = getThisMonth();
+		_year = getThisYear();
+	};
+	clsDate(short day, short month, short year) {
+		_day = day;
+		_month = month;
+		_year = year;
+	};
+	clsDate(string stringDate) {
+		*this = stringToDate(stringDate);
+	};
+	clsDate(short days, short year) {
+		_day = 1, _month = 1, _year = year;
+		*this = addXDay(*this, days);
+	};
 
 	static short getThisYear() {
 		time_t t = time(0);
@@ -68,6 +84,72 @@ public:
 	};
 	bool isLeapYear() {
 		return isLeapYear(_year);
+	};
+	static bool isValidDate(clsDate date) {
+		return(date._month >= 1 && date._month <= 12 &&
+			date._day >= 1 && date._day <= countDaysInMonth(date._year, date._month));
+	};
+	bool isValid() {
+		return isValidDate(*this);
+	};
+	static bool isDate1BeforeDate2(clsDate date1, clsDate date2) {
+		return (date1._year < date2._year) ? true :
+			(date1._year == date2._year) ? (date1._month < date2._month) ? true :
+			(date1._month == date2._month) ? (date1._day < date2._day) : false : false;
+	};
+	bool isDate1BeforeDate2(clsDate date2) {
+		return isDate1BeforeDate2(*this, date2);
+	};
+	static bool isDate1EqualDate2(clsDate date1, clsDate date2) {
+		return date1._year == date2._year && date1._month == date2._month && date1._day == date2._day;
+	};
+	bool isDate1EqualDate2(clsDate date2) {
+		return isDate1EqualDate2(*this, date2);
+	};
+	static bool isDate1AfterDate2(clsDate date1, clsDate date2) {
+		return (!isDate1BeforeDate2(date1, date2));
+	};
+	bool isDate1AfterDate2(clsDate date2) {
+		return isDate1AfterDate2(*this, date2);
+	};
+	static bool isLastDayInMonth(clsDate date) {
+		return date._day == countDaysInMonth(date._year, date._month);
+	};
+	bool isLastDayInMonth() {
+		return isLastDayInMonth(*this);
+	};
+	static bool isLastMonthInYear(short month) {
+		return month == 12;
+	};
+	bool isLastMonthInYear() {
+		return isLastMonthInYear(_month);
+	};
+	static bool isEndOfWeek(clsDate date) {
+		return getOrderWeekDayOfDate(date) == 6;
+	};
+	bool isEndOfWeek() {
+		return isEndOfWeek(*this);
+	};
+	static bool isWeekend(clsDate date) {
+		short dateOrder = getOrderWeekDayOfDate(date);
+		return dateOrder == 5 || dateOrder == 6;
+	};
+	bool isWeekend() {
+		return isWeekend(*this);
+	};
+	static bool isBusinessDay(clsDate date) {
+		return !isWeekend(date);
+	}
+	bool isBusinessDay() {
+		return isBusinessDay(*this);
+	};
+
+	enum enCompareDate { Before = -1, Equal = 0, After = 1 };
+	static enCompareDate compareDates(clsDate date1, clsDate date2) {
+		return
+			isDate1BeforeDate2(date1, date2) ? enCompareDate::Before :
+			isDate1EqualDate2(date1, date2) ? enCompareDate::Equal :
+			enCompareDate::After;
 	};
 
 	static short countDaysInYear(short year) {
@@ -120,109 +202,6 @@ public:
 	int countSecondsInMonth() {
 		return countSecondsInMonth(_year, _month);
 	};
-
-	static string getMonthName(short& month) {
-		string monthsNames[] = { "","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec" };
-		return monthsNames[month];
-	};
-	static string getWeekDayName(short dayOrder) {
-		string weekDays[] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
-		return weekDays[dayOrder];
-	};
-
-	static short getOrderWeekDayOfDate(short day, short month, short year) {
-		short a = floor((14 - month) / 12);
-		short y = year - a;
-		short m = month + 12 * a - 2;
-		short d = day + y + floor(y / 4) - floor(y / 100) + floor(y / 400) + floor(31 * m / 12);
-		//short d = 5 + day + y + floor(y / 4) + floor(31 * m / 12);
-		d = d % 7;
-		return d;
-	};
-	static short getOrderWeekDayOfDate(clsDate date) {
-		return getOrderWeekDayOfDate(date._day, date._month, date._year);
-	};
-	short getOrderWeekDayOfDate() {
-		return getOrderWeekDayOfDate(_day, _month, _year);
-	};
-
-	static bool isValidDate(clsDate date) {
-		return(date._month >= 1 && date._month <= 12 &&
-			date._day >= 1 && date._day <= countDaysInMonth(date._year, date._month));
-	};
-	bool isValidDate() {
-		return isValidDate(*this);
-	};
-	static bool isDate1BeforeDate2(clsDate date1, clsDate date2) {
-		return (date1._year < date2._year) ? true :
-			(date1._year == date2._year) ? (date1._month < date2._month) ? true :
-			(date1._month == date2._month) ? (date1._day < date2._day) : false : false;
-	};
-	bool isDate1BeforeDate2(clsDate date2) {
-		return isDate1BeforeDate2(*this, date2);
-	};
-	static bool isDate1EqualDate2(clsDate date1, clsDate date2) {
-		return date1._year == date2._year && date1._month == date2._month && date1._day == date2._day;
-	};
-	bool isDate1EqualDate2(clsDate date2) {
-		return isDate1EqualDate2(*this, date2);
-	};
-	static bool isDate1AfterDate2(clsDate date1, clsDate date2) {
-		return (!isDate1BeforeDate2(date1, date2));
-	};
-	bool isDate1AfterDate2(clsDate date2) {
-		return isDate1AfterDate2(*this, date2);
-	};
-	static enCompareDate compareDates(clsDate date1, clsDate date2) {
-		return
-			isDate1BeforeDate2(date1, date2) ? enCompareDate::Before :
-			isDate1EqualDate2(date1, date2) ? enCompareDate::Equal :
-			enCompareDate::After;
-	};
-	static bool isLastDayInMonth(clsDate date) {
-		return date._day == countDaysInMonth(date._year, date._month);
-	};
-	bool isLastDayInMonth() {
-		return isLastDayInMonth(*this);
-	};
-	static bool isLastMonthInYear(short month) {
-		return month == 12;
-	};
-	bool isLastMonthInYear() {
-		return isLastMonthInYear(_month);
-	};
-	static bool isEndOfWeek(clsDate date) {
-		return getOrderWeekDayOfDate(date) == 6;
-	};
-	bool isEndOfWeek() {
-		return isEndOfWeek(*this);
-	};
-	static bool isWeekend(clsDate date) {
-		short dateOrder = getOrderWeekDayOfDate(date);
-		return dateOrder == 5 || dateOrder == 6;
-	};
-	bool isWeekend() {
-		return isWeekend(*this);
-	};
-	static bool isBusinessDay(clsDate date) {
-		return !isWeekend(date);
-	}
-	bool isBusinessDay() {
-		return isBusinessDay(*this);
-	};
-	static bool isLastDayInMonth(clsDate date) {
-		return date._day == countDaysInMonth(date._year, date._month);
-	};
-	bool isLastDayInMonth() {
-		return isLastDayInMonth(*this);
-	};
-	static bool isLastMonthInYear(short month) {
-		return month == 12;
-	};
-	bool isLastMonthInYear() {
-		return isLastMonthInYear(_month);
-	};
-
 	static short countDaysFromBeginingOfYear(short year, short month, short day) {
 		for (short i = 1;i < month;i++) {
 			day += countDaysInMonth(year, i);
@@ -253,26 +232,33 @@ public:
 	short countDaysUntilEndOfYear() {
 		return countDaysUntilEndOfYear(*this);
 	};
-	
-	static clsDate stringToDate(string stringDate) {
-		clsDate date;
-		try {
-			vector<string>dateSliced = clsString::split(stringDate, "/");
-			date._day = stoi(dateSliced.at(0));
-			date._month = stoi(dateSliced.at(1));
-			date._year = stoi(dateSliced.at(2));
-		}
-		catch (exception ex) {
-			if (!isValidDate(date)) {
-				cout << "Wrong input !!!\n";
-				date._day = 1;
-				date._month = 1;
-				date._year = 1900;
-			}
-		}
-		return date;
+
+	static string getMonthName(short& month) {
+		string monthsNames[] = { "","Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec" };
+		return monthsNames[month];
 	};
-	clsDate stringToDate(string stringDate) {
+	static string getWeekDayName(short dayOrder) {
+		string weekDays[] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+		return weekDays[dayOrder];
+	};
+
+	static short getOrderWeekDayOfDate(short day, short month, short year) {
+		short a = floor((14 - month) / 12);
+		short y = year - a;
+		short m = month + 12 * a - 2;
+		short d = day + y + floor(y / 4) - floor(y / 100) + floor(y / 400) + floor(31 * m / 12);
+		//short d = 5 + day + y + floor(y / 4) + floor(31 * m / 12);
+		d = d % 7;
+		return d;
+	};
+	static short getOrderWeekDayOfDate(clsDate date) {
+		return getOrderWeekDayOfDate(date._day, date._month, date._year);
+	};
+	short getOrderWeekDayOfDate() {
+		return getOrderWeekDayOfDate(_day, _month, _year);
+	};
+
+	static clsDate stringToDate(string stringDate) {
 		clsDate date;
 		try {
 			vector<string>dateSliced = clsString::split(stringDate, "/");
@@ -295,15 +281,12 @@ public:
 		date1 = date2;
 		date2 = Temp;
 	};
-	void swapDates(clsDate& date2) {
-		return swapDates(*this, date2);
-	};
 	static int getDifferenceDays(clsDate  date1, clsDate date2, bool includingEndDay = false) {
 		int days = 0;
 		while (isDate1BeforeDate2(date1, date2))
 		{
 			days++;
-			date1 = increaseDateByOneDay(date1);
+			date1 = addOneDay(date1);
 		}
 		return
 			includingEndDay ? ++days : days;
@@ -326,10 +309,7 @@ public:
 		clsString::replace(result, "yyyy", to_string(date._year));
 		return result;
 	}
-	string dateFormat(clsDate date, string format = "dd/mm/yyyy") {
-		return dateFormat(*this, format);
-	};
-	
+
 	static clsDate addDays(clsDate date, short days) {
 		short remainingDays = days + countDaysFromBeginingOfYear(date._year, date._month, date._day);
 		date._month = 1;
@@ -353,10 +333,10 @@ public:
 		}
 		return date;
 	}
-	clsDate addDays(short days) {
-		return addDays(*this, days);
+	void addDays(short days) {
+		*this = addDays(*this, days);
 	};
-	static clsDate increaseDateByOneDay(clsDate date) {
+	static clsDate addOneDay(clsDate date) {
 		if (isLastDayInMonth(date)) {
 			if (isLastMonthInYear(date._month)) {
 				date._year++;
@@ -372,41 +352,41 @@ public:
 		}
 		return date;
 	}
-	clsDate increaseDateByOneDay() {
-		return increaseDateByOneDay(*this);
+	void addOneDay() {
+		*this = addOneDay(*this);
 	};
-	static clsDate increaseDateByXDay(clsDate date, short days) {
+	static clsDate addXDay(clsDate date, short days) {
 		for (short i = 1;i <= days;i++) {
-			date = increaseDateByOneDay(date);
+			date = addOneDay(date);
 		}
 		return date;
 	};
-	clsDate increaseDateByXDay(short days) {
-		return increaseDateByXDay(*this, days);
+	void addXDay(short days) {
+		*this = addXDay(*this, days);
 	};
-	static clsDate increaseDateByOneWeek(clsDate date)
+	static clsDate addOneWeek(clsDate date)
 	{
 		for (short i = 1;i <= 7;i++) {
-			date = increaseDateByOneDay(date);
+			date = addOneDay(date);
 		}
 		return date;
 	}
-	clsDate increaseDateByOneWeek()
+	void addOneWeek()
 	{
-		return increaseDateByOneWeek(*this);
+		*this = addOneWeek(*this);
 	};
-	static clsDate increaseDateByXWeek(clsDate date, short weeks)
+	static clsDate addXWeek(clsDate date, short weeks)
 	{
 		for (short i = 1;i <= weeks;i++) {
-			date = increaseDateByOneWeek(date);
+			date = addOneWeek(date);
 		}
 		return date;
 	}
-	clsDate increaseDateByXWeek( short weeks)
+	void addXWeek(short weeks)
 	{
-		return increaseDateByXWeek(*this,weeks);
+		*this = addXWeek(*this, weeks);
 	};
-	static clsDate increaseDateByOneMonth(clsDate date)
+	static clsDate addOneMonth(clsDate date)
 	{
 		if (date._month >= 12)
 		{
@@ -423,74 +403,74 @@ public:
 		}
 		return date;
 	}
-	clsDate increaseDateByOneMonth()
+	void addOneMonth()
 	{
-		return increaseDateByOneMonth(*this);
+		*this = addOneMonth(*this);
 	};
-	static clsDate increaseDateByXMonth(clsDate date, short months)
+	static clsDate addXMonth(clsDate date, short months)
 	{
 		for (int i = 1; i <= months;i++) {
-			date = increaseDateByOneMonth(date);
+			date = addOneMonth(date);
 		}
 		return date;
 	}
-	clsDate increaseDateByXMonth(short months)
+	void addXMonth(short months)
 	{
-		return increaseDateByXMonth(*this,months);
+		*this = addXMonth(*this, months);
 	};
-	static clsDate increaseDateByOneYear(clsDate date)
+	static clsDate addOneYear(clsDate date)
 	{
 		date._year++;
 		return date;
 	}
-	clsDate increaseDateByOneYear()
+	void addOneYear()
 	{
-		return increaseDateByOneYear(*this);
+		*this = addOneYear(*this);
 	};
-	static clsDate increaseDateByXYear(clsDate date, short years)
+	static clsDate addXYear(clsDate date, short years)
 	{
 		date._year += years;
 		return date;
 	}
-	clsDate increaseDateByXYear(short years)
+	void addXYear(short years)
 	{
-		return increaseDateByXYear(*this, years);
+		*this = addXYear(*this, years);
 	};
-	static clsDate increaseDateByOneDecade(clsDate date)
+	static clsDate addOneDecade(clsDate date)
 	{
 		date._year += 10;
 		return date;
 	}
-	clsDate increaseDateByOneDecade()
+	void addOneDecade()
 	{
-		return increaseDateByOneDecade(*this);
+		*this =  addOneDecade(*this);
 	};
-	static clsDate increaseDateByXDecade(clsDate date, short decades)
+	static clsDate addXDecade(clsDate date, short decades)
 	{
 		date._year += (10 * decades);
 		return date;
 	}
-	clsDate increaseDateByXDecade(short decades)
+	void addXDecade(short decades)
 	{
-		return increaseDateByXDecade(*this, decades);
+		*this = addXDecade(*this, decades);
 	};
-	static clsDate increaseDateByOneCentury(clsDate date)
+	static clsDate addOneCentury(clsDate date)
 	{
 		date._year += 100;
 		return date;
 	}
-	clsDate increaseDateByOneCentury(short decades)
+	void addOneCentury(short decades)
 	{
-		return increaseDateByOneCentury(*this);
+		*this = addOneCentury(*this);
 	};
-	static clsDate increaseDateByOneMillennium(clsDate date)
+	static clsDate addOneMillennium(clsDate date)
 	{
 		date._year += 1000;
 		return date;
 	}
-	clsDate increaseDateByOneMillennium()
+	void addOneMillennium()
 	{
-		return increaseDateByOneMillennium(*this);
+		*this = addOneMillennium(*this);
 	};
 
 	static clsDate decreaseDateByOneDay(clsDate date) {
@@ -510,8 +490,8 @@ public:
 		}
 		return date;
 	}
-	clsDate decreaseDateByOneDay() {
-		return decreaseDateByOneDay(*this);
+	void decreaseDateByOneDay() {
+		*this = decreaseDateByOneDay(*this);
 	};
 	static clsDate decreaseDateByXDay(clsDate date, short days) {
 		for (short i = 1;i <= days;i++) {
@@ -519,8 +499,8 @@ public:
 		}
 		return date;
 	}
-	clsDate decreaseDateByXDay(short days) {  
-		return decreaseDateByXDay(*this, days);
+	void decreaseDateByXDay(short days) {
+		*this = decreaseDateByXDay(*this, days);
 	};
 	static clsDate decreaseDateByOneWeek(clsDate date)
 	{
@@ -529,8 +509,8 @@ public:
 		}
 		return date;
 	}
-	clsDate decreaseDateByOneWeek() {
-		return decreaseDateByOneWeek(*this);
+	void decreaseDateByOneWeek() {
+		*this = decreaseDateByOneWeek(*this);
 	};
 	static clsDate decreaseDateByXWeek(clsDate date, short weeks)
 	{
@@ -539,8 +519,8 @@ public:
 		}
 		return date;
 	}
-	clsDate decreaseDateByXWeek(short weeks) {
-		return decreaseDateByXWeek(*this, weeks);
+	void decreaseDateByXWeek(short weeks) {
+		*this = decreaseDateByXWeek(*this, weeks);
 	};
 	static clsDate decreaseDateByOneMonth(clsDate date)
 	{
@@ -559,8 +539,8 @@ public:
 		}
 		return date;
 	}
-	clsDate decreaseDateByOneMonth() {
-		return decreaseDateByOneMonth(*this);
+	void decreaseDateByOneMonth() {
+		*this = decreaseDateByOneMonth(*this);
 	};
 	static clsDate decreaseDateByXMonth(clsDate date, short months)
 	{
@@ -569,62 +549,59 @@ public:
 		}
 		return date;
 	}
-	clsDate decreaseDateByXMonth(short months) {
-		return decreaseDateByXMonth(*this,months);
+	void decreaseDateByXMonth(short months) {
+		*this = decreaseDateByXMonth(*this, months);
 	};
 	static clsDate decreaseDateByOneYear(clsDate date)
 	{
 		date._year--;
 		return date;
 	}
-	clsDate decreaseDateByOneYear() {
-		return decreaseDateByOneYear(*this);
+	void decreaseDateByOneYear() {
+		*this = decreaseDateByOneYear(*this);
 	};
 	static clsDate decreaseDateByXYear(clsDate date, short years)
 	{
 		date._year -= years;
 		return date;
 	}
-	clsDate decreaseDateByXYear(short years) {
-		return decreaseDateByXYear(*this,years);
+	void decreaseDateByXYear(short years) {
+		*this = decreaseDateByXYear(*this, years);
 	};
 	static clsDate decreaseDateByOneDecade(clsDate date)
 	{
 		date._year -= 10;
 		return date;
 	}
-	clsDate decreaseDateByOneDecade() {  
-		return decreaseDateByOneDecade(*this);
+	void decreaseDateByOneDecade() {
+		*this = decreaseDateByOneDecade(*this);
 	};
 	static clsDate decreaseDateByXDecade(clsDate date, short decades)
 	{
 		date._year -= (10 * decades);
 		return date;
 	}
-	clsDate decreaseDateByXDecade(short decades) {
-		return decreaseDateByXDecade(*this,decades);
+	void decreaseDateByXDecade(short decades) {
+		*this = decreaseDateByXDecade(*this, decades);
 	};
 	static clsDate decreaseDateByOneCentury(clsDate date)
 	{
 		date._year -= 100;
 		return date;
 	}
-	clsDate decreaseDateByOneCentury() {
-		return decreaseDateByOneCentury(*this);
+	void decreaseDateByOneCentury() {
+		*this = decreaseDateByOneCentury(*this);
 	};
 	static clsDate decreaseDateByOneMillennium(clsDate date)
 	{
 		date._year -= 1000;
 		return date;
 	}
-	clsDate decreaseDateByOneMillennium() {
-		return decreaseDateByOneMillennium(*this);
+	void decreaseDateByOneMillennium() {
+		*this = decreaseDateByOneMillennium(*this);
 	};
 	static int calculateAgeInDays(clsDate  date) {
 		return getDifferenceDays(date, getSystemDate(), true);
-	};
-	int calculateAgeInDays() {
-		return calculateAgeInDays(*this);
 	};
 
 	static void printHeader(short& month) {
@@ -690,23 +667,5 @@ public:
 		for (short i = 1;i <= 12;i++) {
 			printMonthCalendar(_year, i);
 		};
-	};
-
-	clsDate() {
-		_day = getThisDay();
-		_month = getThisMonth();
-		_year = getThisYear();
-	};
-	clsDate(short day, short month, short year) {
-		_day = day;
-		_month = month;
-		_year = year;
-	};
-	clsDate(string stringDate) {
-		*this = stringToDate(stringDate);
-	};
-	clsDate(short days, short year) {
-		_day = 1, _month = 1, _year = year;
-		*this = increaseDateByXDay(*this, days);
 	};
 };
